@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html lang="utf-8">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+</head>
+<style>
+    body{
+        margin: 0px;;
+        padding: 0px;
+    }
+    .container{
+        left: 0px;
+        top: 0px;
+        margin: 0px;
+        padding: 0px;
+        height: 100%;
+        width: 100%;
+    }
+    .head{
+        width: 100%;
+        height: 60px;
+        background: #3C3F41;
+        /*border: 1px solid ;*/
+        box-shadow: 1px 1px 1px #9FBABA;
+        margin-bottom: 2px;
+    }
+    .content{
+        width: 100%;
+        height: 500px;
+        clear: both;
+    }
+    .foot{
+        width:100%;
+        height: 50px;;
+        clear: both;
+        font-size: 14px;
+       	background: #3C3F41;
+        text-align: center;
+        color: #fff;
+        line-height: 3;
+    }
+
+    .left{
+        width: 15%;
+        height:100%;
+        float: left;
+        background:#3C3F41;
+        box-shadow: 1px 1px 1px #9FBABA;
+        margin-bottom: 2px;
+    }
+    .right{
+        width: 85%;
+        height: 100%;
+        float: right;
+        overflow: scroll;
+    }
+    .headleft{
+        color: #fff;
+        text-shadow: 1px 1px 3px #fff;
+        line-height: 3;
+        margin-left: 51px;
+        font-size: 22px;
+        position: relative;
+        bottom: 5px;
+    }
+    .msg{
+        float: right;
+        line-height: 3;
+        color: #fff;
+        margin-top: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    .imgspan{
+        float: right;
+        margin: 3px 38px;
+        cursor: pointer;
+    }
+
+    .imgspan:hover .perDiv{
+        display: block;
+    }
+
+    ul{
+        list-style-type: none;
+        margin-top: 0px;
+        margin-left: -9%;
+        font-size: 17px;
+        color: #fff;
+    }
+    .link{
+        padding-left: 25%;
+    }
+    li{
+        line-height: 50px;
+        cursor: pointer;
+        margin-left: -20px;
+    }
+    .link:hover{
+        background-color: #607d8b;
+    }
+    .submenu{
+        background-color: rgb(64, 73, 82);
+        box-shadow: 0px 0px 5px gray;
+    }
+    .perDiv{
+        top: 58px;
+        width: 150px;
+        height: 120px;
+        position: absolute;
+        z-index: 999;
+        right: 0px;
+        background:#3C3F41;
+        color: #fff;
+        display: none;
+        border-bottom-right-radius: 3px;
+        border-bottom-left-radius: 3px;
+    }
+    .perDiv > div{
+        padding: 4px 38px;
+        line-height: 30px;
+    }
+    .perDiv > div:hover{
+        background-color: #607d8b;
+        cursor: pointer;
+    }
+    .perDiv a{
+        text-decoration: none;
+        color: #fff;
+    }
+</style>
+<body>
+    <div class="container">
+        <!--头部-->
+        <div class="head">
+            <span class="headleft">TUSHA</span>
+            <div class="imgspan">
+                    <img src="../static/img/login-bg-1.jpg" height="50" width="50" style="border-radius: 25px"/>
+                    <!--个人中心div-->
+                    <div class="perDiv">
+                        <div><a href="#">个人中心</a></div>
+                        <div><a href="#">修改密码</a></div>
+                        <div><a href="/delSession">退出</a></div>
+                    </div>
+            </div>
+            <span class="msg">消息</span>
+            <!--消息div-->
+        </div>
+        <div class="content">
+            <!--左侧导航-->
+            <div class="left">
+                <ul>
+                    <li><div data-url="/" class="link">首页</div></li>
+                    <li><div data-url="/member/index" class="link">用户列表</div></li>
+                    <li>
+                        <div class="link">内容列表 ></div>
+                        <ul style="display: none" class="submenu">
+                            <li><div data-url="/content/jokeIndex" class="link">笑话</div></li>
+                            <li><div data-url="/content/imgIndex" class="link">图片</div></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="link">设置 ></div>
+                        <ul style="display: none" class="submenu">
+                            <li><div data-url="/user/index" class="link">用户管理</div></li>
+                            <li><div data-url="/role/index" class="link">角色管理</div></li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+            <!--右侧main-->
+            <div class="right">
+                右侧内容
+            </div>
+        </div>
+        <!--尾部-->
+        <div class="foot">
+            <span>个人作品，翻版必究</span>
+        </div>
+    </div>
+</body>
+</html>
+<script src="../static/js/jquery-1.9.1.min.js"></script>
+<script>
+    $(".link").click(function () {
+       if($(this).attr("data-url")){
+           console.info($(this).attr("data-url"))
+           if($(this).attr("data-url") == "/"){
+               window.location.href=$(this).attr("data-url");
+           }else {
+               $(".right").load($(this).attr("data-url"));
+           }
+       }else {
+           $(this).next().toggle();
+       }
+    });
+</script>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>图片</title>
+
+<style>
+    .imgContainer{
+        padding: 20px 40px;
+    }
+    .search{
+        width: 100%;
+        padding-bottom: 10px ;
+        border-bottom:1px solid #ccc;
+    }
+
+    .addBtn,.searBtn{
+        float: right;
+        width: 60px;
+        height: 28px;
+        background: #00aaff;
+        border: 1px;
+        border-radius: 2px;
+        cursor: pointer;
+        color: #fff;
+    }
+    .addBtn:hover,.searBtn:hover{
+        background: #00bcd4;
+    }
+
+    .conditDiv{
+        margin-top: 15px;
+        width: 100%;
+    }
+
+    select{
+        width: 181px;
+        height: 25px;
+        border-radius: 2px;
+        border: 1px solid #ccc
+    }
+
+    input{
+        width: 181px;
+        height: 24px;
+        border-radius: 2px;
+        border: 1px solid #ccc
+    }
+
+    .showImg{
+        width:100%;
+        padding: 10px 45px;
+        column-count: 4;
+        column-gap: 1px;
+        break-inside: avoid;
+    }
+    .item{
+        border:1px solid #ccc;
+        /*background:#D9D9D9;*/
+        display:inline-block;
+        width: 180px;
+        margin: 5px;
+        box-shadow: 1px 1px 2px #ccc;
+        /*transition: all 1s ease;*/
+    }
+    .item:hover .editImg{
+        /*transform: scale(1.2);*/
+        /*display: block;*/
+    }
+
+    /*分页*/
+
+    .page{
+        width: 60%;
+        margin: 25px 30%;
+    }
+    .page li{
+        list-style-type: none;
+        float: left;
+        border-radius: 2px;
+        text-align: center;
+        padding: 2px 12px;
+        border: 1px solid #ccc;
+        margin: 0px 5px;
+        cursor: pointer;
+    }
+    .page li:hover{
+        background: #90caf9;
+        outline: none;
+    }
+
+    .page li a{
+        text-decoration: none;
+        color: #0f0f0f;
+    }
+
+    .liActive{
+        background: #4199c3;
+        outline: none;
+    }
+
+    /*模态框*/
+    #divbg{
+        width: 100%;
+        height:100%;
+        background: #333;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        z-index: 100;
+        opacity: 0.5;
+        display: none;
+
+    }
+    #divmodel{
+        width: 50%;
+        height: 460px;
+        border:1px solid #fff;
+        position: fixed;
+        z-index: 101;
+        background-color: #fff;
+        top: 50px;
+        margin: 0 25%;
+        border-radius: 5px;
+        display: none;
+    }
+    .modelTitle{
+        border-bottom: 1px solid #ccc;
+        padding: 10px;
+    }
+    .close{
+        float: right;
+        cursor: pointer;
+    }
+    .content{
+        padding: 5px 25%;
+    }
+    .content > p{
+        height: 50px;
+    }
+    .content > p >input,select{
+        line-height: 28px;
+        width: 240px;
+        border-radius: 5px;
+        border:1px solid #ccc;
+    }
+    .content > p:nth-child(4) span{
+        float: left;
+    }
+    .content > p > textarea{
+        width: 240px;
+        height: 120px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .btn{
+        float: left;
+        margin-top: 80px;
+        margin-left: 98px;
+    }
+    .btn button{
+        border-radius: 5px;
+        background: #00aaff;
+        padding:6px 14px;
+        color: #fff;
+        outline: none;
+        border: 1px;
+        margin: 0px 10px;
+    }
+    .btn button:hover{
+        cursor: pointer;
+        background: #00bcd4;
+    }
+
+    .editImg{
+        text-align: center;
+        background: #2f2525;
+        opacity: 0.5;
+        height: 25px;
+        padding: 15px;
+    }
+
+    .editImg a{
+        background: #008a8a;
+        color: #fff;
+        padding:2px 4px;
+        border-radius: 2px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+</style>
+
+</head>
+<body>
+
+   <div class="imgContainer">
+
+       <div class="search">
+           <span>查询条件</span>
+           <button class="addBtn" th:onclick="'showModel()'">添加</button>
+       </div>
+       <form th:action="@{${page.url}}" method="post">
+
+           <div class="conditDiv">
+           <span>
+               分类：<select name="categoryId">
+                        <option value="">---选择---</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.category}" th:selected="${page.conMap.categoryId eq category.id} ? '':'selected'"></option>
+                    </select>
+           </span>
+
+               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+               <span>图片名称：<input name="fileName"></span>
+
+               <button class="searBtn" type="submit">搜索</button>
+           </div>
+
+       </form>
+
+       <div class="showImg">
+
+           <div class="item" th:each=" img : ${page.TotalResults}">
+               <img th:src="${img.url}" th:height="${img.height}">
+               <div class="editImg">
+                   <a th:href="@{/content/imgAddOrUpd(id = img.id)}">编辑</a>
+                   &nbsp;&nbsp;
+                   <a th:href="@{/content/delImg(id = img.id)}">删除</a>
+               </div>
+           </div>
+
+       </div>
+
+        <!--分页-->
+       <ul class="page" th:if="${page.totalPage &gt; 1}">
+           <li th:text="|共${page.totalPage}页|">共20页</li>
+           <li><a th:href="@{${page.url}(pageNo=1)}">首页</a></li>
+
+           <li th:if="${! #lists.isEmpty(page.nums)}" th:each="num : ${page.nums}" th:class="${page.pageNo eq num} ? 'liActive':''">
+               <a th:href="@{${page.url}(pageNo=${num})}" th:text="${num}"></a>
+           </li>
+
+           <li><a th:href="@{${page.url}(pageNo=${page.totalPage})}">尾页</a></li>
+       </ul>
+
+   </div>
+
+
+   <!--模态框-->
+   <div id="divbg"></div>
+   <div id="divmodel">
+       <div class="modelTitle">
+           <span>添加</span>
+           <span class="close">×</span>
+       </div>
+       <form th:action="@{/content/imgAddOrUpd}" id="imgForm" enctype="multipart/form-data">
+
+           <input id="id" name="id" hidden>
+
+           <div class="content">
+               <p>
+                   <span>标&nbsp;&nbsp;题：</span><input type="text" name="title">
+               </p>
+               <p>
+                   <span>图&nbsp;&nbsp;片：</span><input type="file" name="title">
+               </p>
+               <p> <span>分&nbsp;&nbsp;类：</span>
+                   <select name="categoryId">
+                       <option value="">---选择---</option>
+                       <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.category}" th:selected="${page.conMap.categoryId eq category.id} ? '':'selected'"></option>
+                   </select>
+               </p>
+               <p>
+                   <span>内&nbsp;&nbsp;容：</span>
+                   <textarea name="content">
+
+				</textarea>
+               </p>
+
+               <div class="btn">
+                   <button type="reset" class="reset">取消</button>
+                   <button type="button" class="addForm">确定</button>
+               </div>
+           </div>
+       </form>
+   </div>
+   <!--模态框-->
+
+</body>
+<script th:src="@{/static/js/jquery-1.9.1.min.js}"></script>
+<script>
+    $(function(){
+        $(".close").click(function(){
+            $("#divbg,#divmodel").hide();
+        });
+
+
+        $(".addForm").click(function () {
+            console.info("提交表单");
+
+//            $("#imgForm").submit();
+        });
+    });
+
+    function showModel() {
+        $(".reset").click();
+        $("#divbg,#divmodel").show();
+    }
+    function imgUpd(e) {
+        var id = $(e).attr("data");
+
+        $.ajax({
+            url:'/content/getJokeById/'+id,
+            success:function (data) {
+                $(".reset").click();
+
+                $("#id").val(data.id)
+                $("input[name='title']").val(data.title);
+                $("textarea[name='content']").val(data.content);
+
+                $("#divbg,#divmodel").show();
+            },
+            error:function (data) {
+                console.info(data)
+            }
+
+        });
+    }
+</script>
+</html>

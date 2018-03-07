@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lmandy.dao.IUserMapper">
+
+    <select id="getUserById" resultType="com.lmandy.bean.User">
+        SELECT * FROM img_user WHERE id = ${_parameter}
+    </select>
+    <!--分页-->
+    <select id="getTotalResult" resultType="com.lmandy.bean.User" parameterType="com.lmandy.utils.PageBean">
+        SELECT * FROM img_user WHERE 1=1
+        limit ${firstIndex},${pageSize}
+    </select>
+    <select id="getTotalCount" resultType="java.lang.Integer" parameterType="com.lmandy.utils.PageBean">
+        SELECT COUNT(1) FROM img_user WHERE 1=1
+    </select>
+
+
+</mapper>

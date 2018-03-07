@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>笑话</title>
+</head>
+<style>
+	#condit{
+		width: 90%;
+		margin: 0 5%;
+		margin-top: 30px;
+	}
+	#condit>div:first-child{
+		border-bottom: 1px solid #ccc;
+		margin-bottom: 15px;
+		padding-bottom: 10px;
+	}
+	#condit>div:nth-child(2) p{
+		float: left;
+		padding: 0px 10px;
+	}
+	#condit>div:nth-child(2) input{
+		width: 260px;
+	    line-height: 28px;
+	    border-radius: 3px;
+	    outline: none;
+	    border: 1px solid rgba(158, 158, 158, 0.29);
+	}
+	.btnCondit{
+		float: right;
+		color: #FFF;
+		border: 1px;
+		outline: none;
+		background: #00aaff;
+		padding:6px 14px;
+		cursor: pointer;
+		border-radius: 5px;
+	}
+	.btnCondit:hover{
+		background: #00bcd4;
+	}
+	#tableDiv table{
+		border-collapse: collapse;
+		width: 90%;
+		text-align: center;
+		margin: 0 5%;
+	}
+	th{background: #ccc}
+	#tableDiv>table th,td{
+		border: 1px solid rgba(158, 158, 158, 0.29);
+		line-height: 35px;
+	}
+	#divbg{
+		width: 100%;
+		height:100%;
+		background: #333;
+		position: fixed;
+		top: 0px;
+		left: 0px;
+		z-index: 100;
+		opacity: 0.5;
+		display: none;
+
+	}
+	#divmodel{
+		width: 50%;
+		height: 330px;
+		border:1px solid #fff;
+		position: fixed;
+		z-index: 101;
+		background-color: #fff;
+		top: 50px;
+		margin: 0 25%;
+		border-radius: 5px;
+		display: none;
+	}
+	.modelTitle{
+		border-bottom: 1px solid #ccc;
+		padding: 10px;
+	}
+	.close{
+		float: right;
+		cursor: pointer;
+	}
+	.content{
+		padding: 5px 25%;
+	}
+	.content > p{
+		height: 50px;
+	}
+	.content > p >input{
+		line-height: 28px;
+    	width: 240px;
+    	border-radius: 5px;
+    	border:1px solid #ccc;
+	}
+	.content > p:nth-child(2) span{
+		float: left;
+	}
+	.content > p > textarea{
+    	width: 240px;
+	    height: 120px;
+	    border-radius: 5px;
+	    border: 1px solid #ccc;
+	}
+
+	.btn{
+		float: left;
+		margin-top: 80px;
+		margin-left: 98px;
+	}
+	.btn button{
+		border-radius: 5px;
+		background: #00aaff;
+		padding:6px 14px;
+		color: #fff;
+		outline: none;
+		border: 1px;
+		margin: 0px 10px;
+	}
+	.btn button:hover{
+		cursor: pointer;
+		background: #00bcd4;
+	}
+	.addBtn{
+		margin-top: 20px;
+	}
+
+	/*分页*/
+
+	.page{
+		width: 60%;
+		margin: 25px 30%;
+	}
+	.page li{
+		list-style-type: none;
+		float: left;
+		border-radius: 2px;
+		text-align: center;
+		padding: 2px 12px;
+		border: 1px solid #ccc;
+		margin: 0px 5px;
+		cursor: pointer;
+	}
+	.page li:hover{
+		background: #90caf9;
+		outline: none;
+	}
+
+	.page li a{
+		text-decoration: none;
+		color: #0f0f0f;
+	}
+
+	.liActive{
+		background: #4199c3;
+		outline: none;
+	}
+
+</style>
+<body>
+   <div id="condit">
+   		<div><span>查询条件</span> <button class="seachBtn btnCondit" th:onclick="'showModel()'">添加</button></div>
+   		<div>
+   			<form th:action="@{/content/jokeIndex}" method="post">
+
+				<p>标 题: <input type="text" name="title" th:value="${page.conMap.title}"></p>
+				<p>内 容: <input type="text" name="content" th:value="${page.conMap.content}"></p>
+
+				<button class="addBtn btnCondit" type="submit">搜索</button>
+
+			</form>
+   		</div>
+   </div>
+   <div id="tableDiv">
+   		<table>
+   			<colgroup>
+   				<col width="12%">
+   				<col width="15%">
+   				<col width="15%">
+   				<col width="15%">
+   				<col width="15%">
+   				<col width="18%">
+   			</colgroup>
+   			<thead>
+	            <tr>
+	                <th>ID</th>
+	                <th>标题</th>
+	                <th>内容</th>
+	                <th>创建时间</th>
+	                <th>创建人</th>
+	                <th>操作</th>
+	            </tr>
+            </thead>
+   			<tbody>
+   				<tr th:each="joke : ${page.totalResults}">
+					<td th:text="${joke.id}">1</td>
+					<td th:text="${joke.title}">hello</td>
+					<td th:text="${joke.content}">world</td>
+					<td th:text="${#strings.substring(joke.createTime,0,19)}">2015-11-01</td>
+					<td th:text="${joke.user.userName}">张三</td>
+					<td>
+						<a href="#" th:data="${joke.id}" th:onclick="'jokeUpd(this)'">编辑</a>
+						<a href="#" th:href="@{/content/delJoke(id=${joke.id})}">删除</a>
+					</td>
+				</tr>
+   			</tbody>
+   		</table>
+
+	   <ul class="page" th:if="${page.totalPage &gt; 1}">
+		   <li th:text="|共${page.totalPage}页|">共20页</li>
+		   <li><a th:href="@{${page.url}(pageNo=1)}">首页</a></li>
+
+		   <li th:if="${! #lists.isEmpty(page.nums)}" th:each="num : ${page.nums}" th:class="${page.pageNo eq num} ? 'liActive':''">
+				<a th:href="@{${page.url}(pageNo=${num})}" th:text="${num}"></a>
+		   </li>
+
+
+		   <li><a th:href="@{${page.url}(pageNo=${page.totalPage})}">尾页</a></li>
+	   </ul>
+   </div>
+
+   <!--模态框-->
+   <div id="divbg"></div>
+   <div id="divmodel">
+   		<div class="modelTitle">
+   			<span>添加</span>
+   			<span class="close">×</span>
+   		</div>
+   		<form th:action="@{/content/jokeAddOrUpd}" id="jokeForm">
+
+			<input id="id" name="id" hidden>
+
+			<div class="content">
+				<p>
+					<span>标&nbsp;&nbsp;题：</span><input type="text" name="title">
+				</p>
+				<p>
+					<span>内&nbsp;&nbsp;容：</span>
+					<textarea name="content">
+
+					</textarea>
+				</p>
+
+				<div class="btn">
+					<button type="reset" class="reset">取消</button>
+					<button type="button" class="addForm">确定</button>
+				</div>
+			</div>
+		</form>
+   </div>
+   <!--模态框-->
+</body>
+
+<script th:src="@{/static/js/jquery-1.9.1.min.js}"></script>
+<script type="text/javascript">
+
+    $(function(){
+        $(".close").click(function(){
+            $("#divbg,#divmodel").hide();
+        });
+        
+        $(".addForm").click(function () {
+			console.info("提交表单");
+
+			$("#jokeForm").submit();
+        });
+    });
+
+    function showModel() {
+        $(".reset").click();
+        $("#divbg,#divmodel").show();
+    }
+
+    function jokeUpd(e) {
+		var id = $(e).attr("data");
+
+		$.ajax({
+			url:'/content/getJokeById/'+id,
+			success:function (data) {
+				$(".reset").click();
+
+				$("#id").val(data.id)
+				$("input[name='title']").val(data.title);
+				$("textarea[name='content']").val(data.content);
+
+                $("#divbg,#divmodel").show();
+            },
+			error:function (data) {
+				console.info(data)
+            }
+
+		});
+    }
+
+</script>
+</html>

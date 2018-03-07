@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lmandy.dao.IJokeMapper">
+
+    <select id="getById" resultType="com.lmandy.bean.Joke">
+        SELECT * FROM img_joke WHERE id = ${_parameter}
+    </select>
+    <update id="update" parameterType="com.lmandy.bean.Joke">
+        UPDATE img_joke SET title = #{title},content = #{content} WHERE id = ${id}
+    </update>
+    <delete id="delete">
+        DELETE FROM img_joke WHERE id = ${_parameter}
+    </delete>
+    <insert id="insert" parameterType="com.lmandy.bean.Joke">
+        INSERT INTO img_joke VALUES (NULL,#{title},#{content},now(),#{userId})
+    </insert>
+
+    <!--分页-->
+    <select id="getTotalResult" resultType="com.lmandy.bean.Joke" parameterType="com.lmandy.utils.PageBean">
+        SELECT
+            j.*,
+            u.username 'user.userName'
+        FROM
+            img_joke j
+        LEFT JOIN img_user u ON j.userId = u.id
+        WHERE 1=1
+
+        <if test="conMap.title !=null and conMap.title !=''">
+              AND j.title like '%${conMap.title}%'
+        </if>
+
+        <if test="conMap.content !=null and conMap.content !=''">
+            AND j.content like '%${conMap.content}%'
+        </if>
+
+        limit ${firstIndex},${pageSize}
+    </select>
+    <select id="getTotalCount" resultType="java.lang.Integer" parameterType="com.lmandy.utils.PageBean">
+        SELECT COUNT(1) FROM img_joke WHERE 1=1
+
+        <if test="conMap.title !=null and conMap.title !=''">
+            AND title like '%${conMap.title}%'
+        </if>
+
+        <if test="conMap.content !=null and conMap.content !=''">
+            AND content like '%${conMap.content}%'
+        </if>
+    </select>
+
+
+</mapper>

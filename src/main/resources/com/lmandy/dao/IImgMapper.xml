@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lmandy.dao.IImgMapper">
+
+    <select id="getById" resultType="com.lmandy.bean.Image">
+        SELECT * FROM img_file WHERE id = ${_parameter}
+    </select>
+    <update id="update" parameterType="com.lmandy.bean.Image">
+        UPDATE img_file SET fileName = #{fileName},remark = #{remark},size = #{size},url = #{url} WHERE id = ${id}
+    </update>
+    <delete id="delete">
+        DELETE FROM img_file WHERE id = ${_parameter}
+    </delete>
+    <insert id="insert" parameterType="com.lmandy.bean.Image" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO img_file VALUES (NULL,#{fileName},#{remark},#{size},#{url},#{createId},now())
+    </insert>
+
+    <!--分页-->
+    <select id="getTotalResult" resultType="com.lmandy.bean.Image" parameterType="com.lmandy.utils.PageBean">
+        SELECT
+            f.*,
+            c.category 'category.category'
+        FROM
+        img_file f
+        INNER JOIN img_file_category_relation r ON f.id = r.fileId
+        INNER JOIN img_category c ON c.id = r.categoryId
+        WHERE	1 = 1
+
+        <if test="conMap.fileName !=null and conMap.fileName !=''">
+              AND f.fileName like '%${conMap.fileName}%'
+        </if>
+        <if test="conMap.categoryId !=null and conMap.categoryId !=''">
+            AND c.id = #{conMap.categoryId}
+        </if>
+
+        limit ${firstIndex},${pageSize}
+    </select>
+    <select id="getTotalCount" resultType="java.lang.Integer" parameterType="com.lmandy.utils.PageBean">
+        SELECT
+        COUNT(1)
+        FROM
+        img_file f
+        INNER JOIN img_file_category_relation r ON f.id = r.fileId
+        INNER JOIN img_category c ON c.id = r.categoryId
+        WHERE	1 = 1
+
+        <if test="conMap.fileName !=null and conMap.fileName !=''">
+            AND f.fileName like '%${conMap.fileName}%'
+        </if>
+        <if test="conMap.categoryId !=null and conMap.categoryId !=''">
+            AND c.id = #{conMap.categoryId}
+        </if>
+
+    </select>
+
+
+</mapper>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>登录</title>
+</head>
+<style type="text/css">
+    body{
+        margin: 0px;
+        height: 100%;
+        width: 100%;
+        background-image: url("../static/img/login-bg-2.jpg");
+        background-size: cover;
+    }
+    #login{
+        width: 450px;
+        height: 300px;
+        position: relative;
+        margin: 168px auto;
+        background: rgba(0, 0, 0, 0.37);
+        border-radius:4px
+    }
+
+    #login div > input[type='text'],input[type='password']{
+        margin-top: 20px;
+        margin-bottom: 15px;
+        width: 350px;
+        line-height: 40px;
+        border-radius: 4px;
+        border: none;
+        font-size: 12px;
+        text-indent: 2em
+    }
+
+    #login div:first-child{
+        margin: 0 50px;
+    }
+
+    .remeber{
+        margin: 0 50px;
+        clear: both;
+        content: '';
+        overflow: hidden;
+        zoom: 1;
+        color: #fff;
+    }
+    .remeber input{
+        float: left;
+    }
+    .remeber a{
+        float: right;
+    }
+
+    a.btn{
+        width: 249px;
+        height: 40px;
+        display: inline-block;
+        border-radius: 4px;
+        margin: 19px 22%;
+        background-color: #00acac;
+        text-align: center;
+        line-height: 40px;
+        font-size: 20px;
+        text-decoration: none;
+
+    }
+    button{
+        background-color: #008a8a;
+        padding: 10px 16px;
+        font-size: 16px;
+        color: white
+    }
+    a{
+        color: #fff;
+        text-decoration:none;
+    }
+    ul{
+        margin-top: -130px;
+    }
+    ul img{
+        height:100%;
+        width: 100%;
+        transition: all 1s ease;
+    }
+    ul img:hover{
+        transform: scale(1.2);
+    }
+    ul li{
+        float: right;
+        margin-left: 6px;
+        list-style-type: none;
+        height: 70px;
+        width: 125px;
+        overflow: hidden;
+    }
+    .bg{
+        border: 2px solid white;
+    }
+    #error{
+        color: red;
+        font-size: 14px;
+        text-align: center;
+    }
+</style>
+<body>
+
+<form method="post" action="/login" id="form">
+<div id="login">
+    <div>
+        <input type="text" name="userName" placeholder="用户名">
+        <input type="password" name="passWord" placeholder="密码">
+    </div>
+    <div class="remeber"><input type="checkbox" name="remeberMe" value="1">记住我<a href="#">忘记密码</a></div>
+
+    <a href="javascript:;" class="btn" onclick="login()">登录</a>
+
+    <div id="error" th:if="${not #lists.isEmpty(msg)}" th:text="${msg}"></div>
+</div>
+</form>
+
+<ul>
+    <li><img th:src="@{/static/img/login-bg-1.jpg}" content="login-bg-1.jpg"></li>
+    <li class="bg"><img th:src="@{/static/img/login-bg-2.jpg}" content="login-bg-2.jpg"></li>
+    <li><img th:src="@{/static/img/login-bg-3.jpg}" content="login-bg-3.jpg"></li>
+    <li><img th:src="@{/static/img/login-bg-4.jpg}" content="login-bg-4.jpg"></li>
+</ul>
+
+</body>
+</html>
+<script src="../static/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+
+    //更换图片
+    $("li").click(function () {
+
+        $(this).siblings().each(function () {
+            if($(this).attr("class") == 'bg')
+                $(this).removeClass("bg");
+        });
+
+        $(this).addClass("bg");
+        var img = $(this).children().eq(0).attr("content");
+        console.info(img);
+
+        var url = "url(static/img/"+img+")";
+        $("body").css("background-image",url);
+    });
+
+//  登录
+    function login() {
+        if($("input[name='userName']").val().length==0){
+            alert("用户名不能为空！");
+        }else if($("input[name='passWord']").val().length==0){
+            alert("密码不能为空！");
+        }else {
+            $("#form").submit();
+        }
+    }
+//获取cookie
+    function getCookie(cname) {
+
+        console.info(document.cookie)
+
+
+        var name = cname + "=";
+        if(document.cookie.length>0 && document.cookie.indexOf(name) !=-1){
+            //获取cookie数组
+            var ca = document.cookie.split(';');
+            //遍历cookie
+            for(var i=0; i<ca.length; i++) {
+                var c = ca[i];
+                if (c.indexOf(name) != -1)
+                    return c.substring(name.length, c.length);
+            }
+        }
+
+        return "";
+    }
+
+    $( function (){
+        //记住密码功能
+        var str = getCookie("loginInfo");
+        console.info(str)
+        if(str.length>0){
+            var username = str.split("#")[0];
+            var password = str.split("#")[1];
+            //自动填充用户名和密码
+            $("input[name='userName']").val(username);
+            $("input[name='passWord']").val(password);
+
+            $("input[type='checkbox']").prop("checked",true);
+        }else {
+            $("input[type='checkbox']").prop("checked",false);
+        }
+
+
+        //监听用户按键事件 当按键为enter时登陆
+        $( "input[name='passWord']" ).bind('keyup' , function(event) {
+            if (event.keyCode == "13" ) {
+                //回车执行查询
+                $( ".btn" ).click();
+            }
+        });
+    })
+</script>

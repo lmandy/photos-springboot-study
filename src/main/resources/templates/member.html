@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>会员</title>
+    <!--<link   href="../static/bootstrap/css/bootstrap.min.css" rel="stylesheet">-->
+    <!--<script src="../static/bootstrap/js/bootstrap.min.js"></script>-->
+    <script src="../static/js/jquery-1.9.1.min.js"></script>
+    <!-- 引入 ECharts 文件 -->
+    <script src="../static/js/echarts.min.js"></script>
+
+    <style>
+        .chart{
+            margin-top: 20px;
+            margin-left: 30px;
+            width: 540px;
+            height: 300px;
+            float: left;
+        }
+        .condition{
+            margin-top: 20px;
+            width: 450px;
+            height: 300px;
+            float: right;
+        }
+        .condition > div:first-child{
+            border-bottom: 1px solid #ccc;
+        }
+        .condition > div:nth-child(2){
+            margin-top: 20px;
+            text-align: right;
+        }
+        input{
+           border: 1px solid #ccc;
+            border-radius: 4px;
+            height: 25px;
+            margin-top: 14px;
+            margin-right: 175px;
+            width: 46%;
+        }
+        .search{
+            color: #fff;
+            background-color: #5bc0de;
+            float: right;
+            padding: 6px 12px;
+            margin-right: 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            position: relative;
+            top: -13px;
+        }
+        .search:hover{
+            background-color:#51a5cc;
+        }
+        .tableDiv table{
+            border-collapse: collapse;
+            text-align: center;
+            margin: 0 20px;
+            width: 97%
+        }
+        th{
+             background-color: #F5F5F5; 
+        }
+        .tableDiv table th,td{
+            border: 1px solid #ccc;
+            line-height: 40px;
+        }
+    </style>
+
+
+</head>
+<body>
+    <div class="chart" id="chart">
+        图表
+    </div>
+    <div class="condition">
+        <div>
+            <span>查询条件</span><button class="search">查询</button>
+        </div>
+        <div>
+            用户名：<input><br>
+            手机号：<input><br>
+            邮箱：<input><br>
+            昵称：<input>
+        </div>
+    </div>
+
+    <div class="tableDiv">
+        <table>
+            <colgroup>
+                <col width="10%">
+                <col width="10%">
+                <col width="11%">
+                <col width="11%">
+                <col width="11%">
+                <col width="11%">
+                <col width="11%">
+                <col width="11%">
+                <col width="11%">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>用户名</th>
+                    <th>昵称</th>
+                    <th>手机号</th>
+                    <th>邮箱</th>
+                    <th>会员</th>
+                    <th>过期时间</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>zhangsan</td>
+                    <td>张三</td>
+                    <td>19303959589</td>
+                    <td>389289847@qq.com</td>
+                    <td>是</td>
+                    <td>2018-10-30</td>
+                    <td>2018-10-30</td>
+                    <td>删除</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>zhangsan</td>
+                    <td>张三</td>
+                    <td>19303959589</td>
+                    <td>389289847@qq.com</td>
+                    <td>是</td>
+                    <td>2018-10-30</td>
+                    <td>2018-10-30</td>
+                    <td>删除</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>zhangsan</td>
+                    <td>张三</td>
+                    <td>19303959589</td>
+                    <td>389289847@qq.com</td>
+                    <td>是</td>
+                    <td>2018-10-30</td>
+                    <td>2018-10-30</td>
+                    <td>删除</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>zhangsan</td>
+                    <td>张三</td>
+                    <td>19303959589</td>
+                    <td>389289847@qq.com</td>
+                    <td>是</td>
+                    <td>2018-10-30</td>
+                    <td>2018-10-30</td>
+                    <td>删除</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>zhangsan</td>
+                    <td>张三</td>
+                    <td>19303959589</td>
+                    <td>389289847@qq.com</td>
+                    <td>是</td>
+                    <td>2018-10-30</td>
+                    <td>2018-10-30</td>
+                    <td>删除</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('chart'));
+
+    // 指定图表的配置项和数据
+    option = {
+        title: {
+            text: '未来一周气温变化',
+            subtext: '纯属虚构'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['最高气温']
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                dataZoom: {
+                    yAxisIndex: 'none'
+                },
+                dataView: {readOnly: false},
+                magicType: {type: ['line', 'bar']},
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        xAxis:  {
+            type: 'category',
+            boundaryGap: false,
+            data: ['周一','周二','周三','周四','周五','周六','周日']
+        },
+        yAxis: {
+            type: 'value',
+            axisLabel: {
+                formatter: '{value} °C'
+            }
+        },
+        series: [
+            {
+                name:'最高气温',
+                type:'line',
+                data:[11, 11, 15, 13, 12, 13, 10],
+                markPoint: {
+                    data: [
+                        {type: 'max', name: '最大值'},
+                        {type: 'min', name: '最小值'}
+                    ]
+                },
+                markLine: {
+                    data: [
+                        {type: 'average', name: '平均值'}
+                    ]
+                }
+            }
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
