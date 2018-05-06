@@ -303,8 +303,8 @@
 			})
         })
 		
-		$(".page li").click(function () {
-			var url = $(this).find("a").attr("data-url");
+		$(".page a").click(function () {
+			var url = $(this).attr("data-url");
             $.ajax({
                 url:url,
                 success:function (data) {
