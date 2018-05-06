@@ -167,7 +167,7 @@
 				<p>标 题: <input type="text" name="title" th:value="${page.conMap.title}"></p>
 				<p>内 容: <input type="text" name="content" th:value="${page.conMap.content}"></p>
 
-				<button class="addBtn btnCondit" type="submit">搜索</button>
+				<button class="addBtn btnCondit" type="button">搜索</button>
 
 			</form>
    		</div>
@@ -201,7 +201,7 @@
 					<td th:text="${joke.user.userName}">张三</td>
 					<td>
 						<a href="#" th:data="${joke.id}" th:onclick="'jokeUpd(this)'">编辑</a>
-						<a href="#" th:href="@{/content/delJoke(id=${joke.id})}">删除</a>
+						<a href="#" th:data="${joke.id}" th:onclick="'deleteJoke(this)'">删除</a>
 					</td>
 				</tr>
    			</tbody>
@@ -262,9 +262,46 @@
         
         $(".addForm").click(function () {
 			console.info("提交表单");
+			var url = $(this).parent().parent().parent().attr("action");
 
-			$("#jokeForm").submit();
+            var id = $("input[name='id']").val();
+            var title = $(".content input[name='title']").val();
+            var content = $("textarea[name='content']").val();
+            var data = {};
+
+            data.id = id;
+            data.title = title;
+            data.content = content;
+			debugger
+            $.ajax({
+                url:url,
+                data:data,
+                dataType:"html",
+                success:function (data) {
+                    $(".right").html(data);
+                }
+            })
+
         });
+
+        $(".addBtn").click(function () {
+            var url = $(this).parent().attr("action");
+            var title = $("input[name='title']").val();
+            var content = $("input[name='content']").val();
+            var data = {};
+
+            data.title = title;
+            data.content = content;
+
+            $.ajax({
+				url:url,
+				data:data,
+				dataType:"html",
+				success:function (data) {
+					$(".right").html(data);
+                }
+			})
+        })
     });
 
     function showModel() {
@@ -289,9 +326,22 @@
 			error:function (data) {
 				console.info(data)
             }
-
 		});
     }
+
+    function deleteJoke(e){
+        var url = "/content/delJoke?id=" + $(e).attr("data");
+		alert(url)
+        $.ajax({
+            url:url,
+            success:function (data) {
+                $(".right").html(data);
+            },
+            error:function (data) {
+                console.info(data)
+            }
+        });
+	}
 
 </script>
 </html>

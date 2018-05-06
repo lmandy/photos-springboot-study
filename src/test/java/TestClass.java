@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.sql.DataSource;
+
 /**
  * Created by lmandy on 2017/10/9.
  */
