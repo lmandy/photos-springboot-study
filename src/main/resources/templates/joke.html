@@ -209,14 +209,14 @@
 
 	   <ul class="page" th:if="${page.totalPage &gt; 1}">
 		   <li th:text="|共${page.totalPage}页|">共20页</li>
-		   <li><a th:href="@{${page.url}(pageNo=1)}">首页</a></li>
+		   <li><a href="javascript:void (0)" th:attr="data-url=@{${page.url}(pageNo=1)}">首页</a></li>
 
 		   <li th:if="${! #lists.isEmpty(page.nums)}" th:each="num : ${page.nums}" th:class="${page.pageNo eq num} ? 'liActive':''">
-				<a th:href="@{${page.url}(pageNo=${num})}" th:text="${num}"></a>
+				<a href="javascript:void (0)" th:text="${num}" th:attr="data-url=@{${page.url}(pageNo=${num})}"></a>
 		   </li>
 
 
-		   <li><a th:href="@{${page.url}(pageNo=${page.totalPage})}">尾页</a></li>
+		   <li><a href="javascript:void (0)" th:attr="data-url=@{${page.url}(pageNo=${page.totalPage})}">尾页</a></li>
 	   </ul>
    </div>
 
@@ -302,6 +302,19 @@
                 }
 			})
         })
+		
+		$(".page li").click(function () {
+			var url = $(this).find("a").attr("data-url");
+            $.ajax({
+                url:url,
+                success:function (data) {
+                    $(".right").html(data);
+                },
+                error:function (data) {
+                    console.info(data)
+                }
+            });
+        });
     });
 
     function showModel() {
