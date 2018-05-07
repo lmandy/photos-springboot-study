@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +54,8 @@ public class ContentController {
 
     @Value("${filePath}")
     private String filePath;
+    @Value("${imgUrl}")
+    private String imgUrl;
 
     /**
      * 笑话
@@ -141,6 +145,11 @@ public class ContentController {
         if(pageBean.getTotalResults() !=null && pageBean.getTotalResults().size() >0){
 
             for (Image image : pageBean.getTotalResults()) {
+                image.setUrl(imgUrl+image.getUrl());
+
+                if(image.getUrl() == null)
+                    continue;
+
                 InputStream inputStream = new URL(image.getUrl()).openStream();
                 BufferedImage bufferedImage = ImageIO.read(inputStream);
 
@@ -170,26 +179,26 @@ public class ContentController {
      * @return
      */
     @RequestMapping("imgAddOrUpd")
-    public String imgAddOrUpd(Image image, MultipartFile ImgFile) throws IOException {
+    public String imgAddOrUpd(Image image, MultipartFile imgFile,HttpServletRequest request) throws IOException, ServletException {
 
         if(image.getId() == null){
-            if(ImgFile !=null && StringUtils.isNotBlank(ImgFile.getOriginalFilename())){
+            if(imgFile !=null && StringUtils.isNotBlank(imgFile.getOriginalFilename())){
                 File basePath = new File(filePath);
-                if(basePath == null){
+                if(!basePath.exists()){
                     basePath.mkdirs();
                 }
 
-                String extension = FilenameUtils.getExtension(ImgFile.getOriginalFilename());
+                String extension = FilenameUtils.getExtension(imgFile.getOriginalFilename());
 
                 String fielName = UUID.randomUUID().toString().replace("-","")+"."+extension;
 
-                ImgFile.transferTo(new File(basePath, fielName));
+                imgFile.transferTo(new File(basePath, fielName));
 
                 image.setUrl(fielName);
             }
 
             imageService.insert(image);
-            //图片，分类关系
+//            图片，分类关系
             categoryService.fileCategoryRelation(image.getId(),image.getCategoryId());
 
         }else {
@@ -224,8 +233,10 @@ public class ContentController {
 
         Image image = getImgById(id);
         if(StringUtils.isNotBlank(image.getUrl())){
-            FileUtils.deleteQuietly(new File(image.getUrl()));
+            new File(filePath,imgUrl).delete();
         }
+
+        categoryService.deleteRelation(image.getId());
 
         imageService.delete(id);
 

@@ -22,5 +22,8 @@
     <insert id="fileCategoryRelation">
         INSERT INTO img_file_category_relation VALUES (NULL ,#{0},#{1})
     </insert>
+    <delete id="deleteRelation">
+        DELETE FROM img_file_category_relation WHERE fileId = #{parameter}
+    </delete>
 
 </mapper>

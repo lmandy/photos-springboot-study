@@ -8,5 +8,6 @@ import com.lmandy.bean.Category;
 public interface ICategoryService extends IBaseService<Category>{
 
     void fileCategoryRelation(Integer fileId,Integer categoryId);
+    void deleteRelation(Integer fileId);
 
 }

@@ -27,4 +27,9 @@ public class ICategoryServiceImpl extends IBaseServiceImpl<Category> implements 
     public void fileCategoryRelation(Integer fileId,Integer categoryId){
         categoryMapper.fileCategoryRelation(fileId,categoryId);
     }
+
+    @Override
+    public void deleteRelation(Integer fileId) {
+        categoryMapper.deleteRelation(fileId);
+    }
 }

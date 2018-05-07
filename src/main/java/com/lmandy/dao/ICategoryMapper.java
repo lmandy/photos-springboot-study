@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface ICategoryMapper extends IBaseMapper<Category>{
 
     void fileCategoryRelation(Integer fileId, Integer categoryId);
+
+    void deleteRelation(Integer fileId);
 }

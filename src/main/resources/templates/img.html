@@ -201,13 +201,13 @@
            <span>查询条件</span>
            <button class="addBtn" th:onclick="'showModel()'">添加</button>
        </div>
-       <form th:action="@{${page.url}}" method="post">
+       <form th:action="@{${page.url}}">
 
            <div class="conditDiv">
            <span>
                分类：<select name="categoryId">
                         <option value="">---选择---</option>
-                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.category}" th:selected="${page.conMap.categoryId eq category.id} ? '':'selected'"></option>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.category}"></option>
                     </select>
            </span>
 
@@ -215,7 +215,7 @@
 
                <span>图片名称：<input name="fileName"></span>
 
-               <button class="searBtn" type="submit">搜索</button>
+               <button class="searBtn" type="button">搜索</button>
            </div>
 
        </form>
@@ -225,9 +225,9 @@
            <div class="item" th:each=" img : ${page.TotalResults}">
                <img th:src="${img.url}" th:height="${img.height}">
                <div class="editImg">
-                   <a th:href="@{/content/imgAddOrUpd(id = img.id)}">编辑</a>
+                   <a href="javascript:void (0)" th:attr="data-url=@{/content/imgAddOrUpd(id = ${img.id})}">编辑</a>
                    &nbsp;&nbsp;
-                   <a th:href="@{/content/delImg(id = img.id)}">删除</a>
+                   <a href="javascript:void (0)" th:attr="data-url=@{/content/delImg(id = ${img.id})}">删除</a>
                </div>
            </div>
 
@@ -236,13 +236,14 @@
         <!--分页-->
        <ul class="page" th:if="${page.totalPage &gt; 1}">
            <li th:text="|共${page.totalPage}页|">共20页</li>
-           <li><a th:href="@{${page.url}(pageNo=1)}">首页</a></li>
+           <li><a href="javascript:void (0)" th:attr="data-url=@{${page.url}(pageNo=1)}">首页</a></li>
 
            <li th:if="${! #lists.isEmpty(page.nums)}" th:each="num : ${page.nums}" th:class="${page.pageNo eq num} ? 'liActive':''">
-               <a th:href="@{${page.url}(pageNo=${num})}" th:text="${num}"></a>
+               <a href="javascript:void (0)" th:text="${num}" th:attr="data-url=@{${page.url}(pageNo=${num})}"></a>
            </li>
 
-           <li><a th:href="@{${page.url}(pageNo=${page.totalPage})}">尾页</a></li>
+
+           <li><a href="javascript:void (0)" th:attr="data-url=@{${page.url}(pageNo=${page.totalPage})}">尾页</a></li>
        </ul>
 
    </div>
@@ -255,28 +256,25 @@
            <span>添加</span>
            <span class="close">×</span>
        </div>
-       <form th:action="@{/content/imgAddOrUpd}" id="imgForm" enctype="multipart/form-data">
+       <form id="imgForm" enctype="multipart/form-data" method="post">
 
            <input id="id" name="id" hidden>
 
            <div class="content">
                <p>
-                   <span>标&nbsp;&nbsp;题：</span><input type="text" name="title">
+                   <span>标&nbsp;&nbsp;题：</span><input type="text" name="fileName">
                </p>
                <p>
                    <span>图&nbsp;&nbsp;片：</span><input type="file" name="imgFile">
                </p>
                <p> <span>分&nbsp;&nbsp;类：</span>
                    <select name="categoryId">
-                       <option value="">---选择---</option>
-                       <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.category}" th:selected="${page.conMap.categoryId eq category.id} ? '':'selected'"></option>
+                       <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.category}" th:selected="${page.conMap.categoryId eq category.id} ? 'selected':''"></option>
                    </select>
                </p>
                <p>
                    <span>内&nbsp;&nbsp;容：</span>
-                   <textarea name="content">
-
-				</textarea>
+                   <textarea name="remark"></textarea>
                </p>
 
                <div class="btn">
@@ -298,9 +296,85 @@
 
 
         $(".addForm").click(function () {
-            console.info("提交表单");
+            var formData = new FormData();;
+            if($(".content input[name='fileName']").val().length == 0){
+                alert("名称不能为空");
+                return false;
+            } else {
+                formData.append("fileName",$(".content input[name='fileName']").val())
+            }
+            if($(".content input[name='imgFile']").val().length == 0){
+                alert("请选择图片");
+                return false;
+            } else {
+                console.info($(".content input[name='imgFile']").val())
+                formData.append("imgFile",$(".content input[name='imgFile']")[0].files[0])
+            }
 
-//            $("#imgForm").submit();
+            formData.append("id",$("input[name='id']").val());
+            formData.append("categoryId",$(".content select[name='categoryId'] option:selected").val());
+            console.info($(".content input[name='imgFile']")[0].files[0])
+
+            $.ajax({
+                url: '/content/imgAddOrUpd',
+                type: 'POST',
+                cache: false,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success:function (data) {
+                    $(".right").html(data);
+                }
+            })
+        });
+
+        $(".searBtn").click(function () {
+            var url = $(this).parent().parent().attr("action");
+            var categoryId = $("select[name='categoryId']:first option:selected").val();
+            var fileName = $("input[name='fileName']").val();
+            var data = {};
+
+
+
+            data.categoryId = categoryId;
+            data.fileName = fileName;
+
+            $.ajax({
+                url:url,
+                data:data,
+                dataType:"html",
+                success:function (data) {
+                    $(".right").html(data);
+                }
+            })
+        })
+
+        $(".page a").click(function () {
+            var url = $(this).attr("data-url");
+            $.ajax({
+                url:url,
+                success:function (data) {
+                    $(".right").html(data);
+                },
+                error:function (data) {
+                    console.info(data)
+                }
+            });
+        });
+
+        $(".editImg a:eq(0)").click(function () {
+            var url = $(this).attr("data-url");
+            alert("暂无此功能")
+        });
+        $(".editImg a:eq(1)").click(function () {
+            var url = $(this).attr("data-url");
+            $.ajax({
+                url:url,
+                dataType:"html",
+                success:function (data) {
+                    $(".right").html(data);
+                }
+            })
         });
     });
 
